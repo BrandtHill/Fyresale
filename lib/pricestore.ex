@@ -1,11 +1,11 @@
-defmodule PriceStore do
+defmodule Fyresale.PriceStore do
   @moduledoc """
   Maintains state of watched prices  
   """
 
   use GenServer
 
-  def start_link do
+  def start_link(_opts) do
     GenServer.start_link(__MODULE__, %{})
   end
 
@@ -18,16 +18,15 @@ defmodule PriceStore do
   end
 
   def set_price(pid, price) do
-    GenServer.call(pid, {:set_price, price})
+    GenServer.cast(pid, {:set_price, price})
   end
 
-  def handle_call(:get_price, _from, state) do
-    {:reply, Map.get(state, :eft), state}
+  def handle_call({:get_price, key}, _from, state) do
+    {:reply, Map.get(state, key), state}
   end
 
-  def handle_call({:set_price, price}, _from, state) do
-    new_state = Map.put(state, :eft, price)
-    {:reply, new_state, new_state}
+  def handle_cast({:set_price, key, price}, _from, state) do
+    {:no_reply, Map.put(state, key, price)}
   end
 
 end

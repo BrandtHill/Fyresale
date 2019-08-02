@@ -1,7 +1,11 @@
-defmodule Fyresale do
+defmodule Fyresale.PriceFinder do
   @moduledoc """
-  Documentation for Fyresale.
+  Functions to grab the price from the web.
   """
+
+  def child_spec(_opts) do
+    IO.write("Starting PriceFinder")
+  end
 
   def get_price(url, selector) do
     with {:ok, res} <- HTTPoison.get(url)
