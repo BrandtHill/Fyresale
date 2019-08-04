@@ -6,10 +6,7 @@ defmodule Fyresale.Supervisor do
   end
 
   def init(:ok) do
-    children = [
-      Fyresale.PriceStore
-    ]
-
+    children = [Fyresale.PriceStore]
     Supervisor.init(children, strategy: :one_for_one)
   end
 
