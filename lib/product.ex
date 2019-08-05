@@ -9,6 +9,8 @@ defmodule Fyresale.Product do
     sale_ratio: 0.0
   ]
 
+  require Logger
+
   def new, do: %__MODULE__{}
   def new(params), do: struct(__MODULE__, params)
 
@@ -18,6 +20,7 @@ defmodule Fyresale.Product do
   end
 
   def update_price(product, price) do
+    Logger.debug("Updating price for #{product.name}: $#{price}")
     %{product | curr_price: price}
   end
 
