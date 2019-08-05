@@ -15,7 +15,7 @@ defmodule Fyresale.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Fyresale, []}
+      #mod: {Fyresale, []}
     ]
   end
 
