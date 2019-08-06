@@ -8,11 +8,14 @@ defmodule Fyresale.ProductStore do
 
   def start_link(_opts) do
     Logger.info("Fyresale.ProductStore process starting")
-    GenServer.start_link(__MODULE__, %{}, name: Products)
+    products = Application.get_env(:fyresale, :products)
+    |> Enum.map(&Fyresale.Product.new(&1))
+    |> Map.new(fn p -> {p.name, p} end)
+    GenServer.start_link(__MODULE__, products, name: Products)
   end
 
   def init(init_data) do
-    Logger.debug("Fyresale.ProductStore.init/1 called with initial data: #{inspect(init_data)}")
+    Logger.debug("Fyresale.ProductStore.init/1 called with initial data: #{inspect(init_data)}")   
     {:ok, init_data}
   end
 
@@ -26,7 +29,7 @@ defmodule Fyresale.ProductStore do
 
   def get_product(name) do
     product = GenServer.call(Products, {:get_product, name})
-    Logger.debug("Fetching #{product.name}: #{inspect(product)}")
+    Logger.debug("Fetching #{name}: #{inspect(product)}")
     product
   end
 

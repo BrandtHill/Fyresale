@@ -1,4 +1,5 @@
 import Config
+require Logger
 
 regexes = [
   ~r|NAME_[0-9]|,
@@ -35,13 +36,13 @@ indexes = regexes
 |> Enum.reduce(&MapSet.intersection(&1, &2))
 |> Enum.to_list
 
-config :fyresale, :product_names, indexes |> Enum.map(&get_env_at.("NAME", &1))
+config :fyresale, :product_names,
+  indexes |> Enum.map(&get_env_at.("NAME", &1))
 
-config :fyresale, :products, indexes |> Enum.map(&get_product.(&1))
+config :fyresale, :products,
+  indexes |> Enum.map(&get_product.(&1))
 
 config :logger,
   level: :debug
 
-
-IO.inspect(indexes |> Enum.map(&get_product.(&1)))
-IO.inspect(indexes |> Enum.map(&get_env_at.("NAME", &1)))
+Logger.debug(inspect(indexes |> Enum.map(&get_product.(&1))))

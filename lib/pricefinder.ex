@@ -27,16 +27,22 @@ defmodule Fyresale.PriceFinder do
   def child_spec(_arg) do
     %{
       id: PriceFinder,
-      start: {__MODULE__, :loop, Application.get_env(:fyresale, :product_names)}
+      start: {__MODULE__, :init, [Application.get_env(:fyresale, :product_names)]}
     }
   end
 
-  def loop(names) do
-    Process.send_after(self(), :hello_world, 2000)
-    
+  def init(names) do
+    Logger.debug("PriceFinder init called with #{inspect(names)}")
+    send(self(), names)
+    loop(names)
+  end
+
+  defp loop(names) do
     receive do
-      msg -> Logger.debug("Got this message: #{msg}")
+      msg -> Logger.debug("Got this message: #{inspect(msg)}")
     end
+    names |> Task.async_stream(fn n -> check_price(n) end) |> Enum.to_list
+    Process.send_after(self(), :hello_world, 10_000)
     loop(names)
   end
 end
