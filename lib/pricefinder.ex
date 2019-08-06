@@ -23,4 +23,20 @@ defmodule Fyresale.PriceFinder do
       price
     end
   end
+
+  def child_spec(_arg) do
+    %{
+      id: PriceFinder,
+      start: {__MODULE__, :loop, Application.get_env(:fyresale, :product_names)}
+    }
+  end
+
+  def loop(names) do
+    Process.send_after(self(), :hello_world, 2000)
+    
+    receive do
+      msg -> Logger.debug("Got this message: #{msg}")
+    end
+    loop(names)
+  end
 end

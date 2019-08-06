@@ -21,7 +21,7 @@ defmodule Fyresale.Product do
 
   def update_price(product, price) do
     Logger.debug("Updating price for #{product.name}: $#{price}")
-    %{product | curr_price: price}
+    %{product | curr_price: price, base_price: (if product.base_price == 0, do: price, else: product.base_price)}
   end
 
 end
