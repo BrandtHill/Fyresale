@@ -1,10 +1,17 @@
 defmodule Fyresale.PriceFinder do
   @moduledoc """
-  Functions to grab the price from the web.
+  Module to grab the price from the web.
+  Can be supervised and will periodically check prices.
   """
   require Logger
 
   alias Fyresale.{Product, ProductStore}
+
+  @headers [
+    {"User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
+  ]
+
+  @loop_period (1000 * 60 * 60)
 
   def check_price(name) do
     product = name |> ProductStore.get_product
@@ -16,11 +23,17 @@ defmodule Fyresale.PriceFinder do
   end
 
   def get_price(url, selector) do
-    with {:ok, res} <- HTTPoison.get(url)
+    with {:ok, res} <- HTTPoison.get(url, @headers)
     do
-      [{_, _, [content | _]} | _] = res.body |> Floki.find(selector)
-      {price, _} = content |> String.replace("$", "") |> Float.parse
-      price
+      IO.inspect(Floki.find(res.body, selector))
+      res.body
+      |> Floki.find(selector)
+      |> hd
+      |> elem(2)
+      |> hd
+      |> String.replace("$", "")
+      |> Float.parse
+      |> elem(0)
     end
   end
 
@@ -34,15 +47,18 @@ defmodule Fyresale.PriceFinder do
   def init(names) do
     Logger.debug("PriceFinder init called with #{inspect(names)}")
     send(self(), names)
-    loop(names)
+    loop()
   end
 
-  defp loop(names) do
+  defp check_price_task(name), do: Task.start(fn -> check_price(name) end)
+
+  defp loop do
     receive do
-      msg -> Logger.debug("Got this message: #{inspect(msg)}")
+      msg when is_list msg -> 
+        Logger.debug("Got this message: #{inspect(msg)}")
+        msg |> Enum.each(&check_price_task(&1))
+        Process.send_after(self(), msg, @loop_period)
+        loop()
     end
-    names |> Task.async_stream(fn n -> check_price(n) end) |> Enum.to_list
-    Process.send_after(self(), :hello_world, 10_000)
-    loop(names)
   end
 end
