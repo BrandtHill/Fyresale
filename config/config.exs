@@ -53,4 +53,7 @@ config :fyresale, Fyresale.Mailer,
   username: System.get_env("EMAIL_USER"),
   password: System.get_env("EMAIL_PASS"),
   tls: :if_available,
-  retries: 1
+  retries: 2
+
+config :fyresale, :recipients,
+  System.get_env("EMAIL_DEST", "") |> String.split([" ", ",", ";"], trim: true)

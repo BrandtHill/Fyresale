@@ -6,11 +6,19 @@ defmodule Fyresale.Mailer do
   def sale_email(name) do
     product = Fyresale.ProductStore.get_product(name)
     new_email(
-      to: Application.get_env(:fyresale, Fyresale.Mailer)[:username],
+      to: get_recipients(),
       from: Application.get_env(:fyresale, Fyresale.Mailer)[:username],
       subject: "Fyresale - #{name} is on sale",
-      html_body: "<h3>#{name} is on sale for <b>$#{product.curr_price}</b></h3><a href=\"#{product.url}\">Link to product</a>",
+      html_body: "<h3>#{name} is on sale for $#{product.curr_price}</h3><br><a href=\"#{product.url}\">Link to product</a>",
       text_body: "#{name} is on sale for #{product.curr_price}. Link here: #{product.url}"
     )
+  end
+
+  defp get_recipients do
+    unless Enum.empty?(Application.get_env(:fyresale, :recipients)) do
+      Application.get_env(:fyresale, :recipients)
+    else
+      Application.get_env(:fyresale, Fyresale.Mailer)[:username]
+    end
   end
 end

@@ -34,7 +34,7 @@ defmodule Fyresale.ProductStore do
   end
 
   def set_product(name, product) do
-    Logger.info("Setting #{name} to #{inspect(product)}")
+    Logger.info("Setting #{name} to #{inspect(product, pretty: true)}")
     GenServer.cast(Products, {:set_product, name, product})
   end
 end
