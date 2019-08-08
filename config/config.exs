@@ -45,4 +45,12 @@ config :fyresale, :products,
 config :logger,
   level: :debug
 
-Logger.debug(inspect(indexes |> Enum.map(&get_product.(&1))))
+config :fyresale, Fyresale.Mailer,
+  adapter: Bamboo.SMTPAdapter,
+  server:   System.get_env("EMAIL_SERV", "smtp.gmail.com"),
+  hostname: System.get_env("EMAIL_HOST", "gmail.com"),
+  port:     System.get_env("EMAIL_PORT", "587") |> String.to_integer,
+  username: System.get_env("EMAIL_USER"),
+  password: System.get_env("EMAIL_PASS"),
+  tls: :if_available,
+  retries: 1

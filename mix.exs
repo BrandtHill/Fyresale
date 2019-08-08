@@ -15,7 +15,8 @@ defmodule Fyresale.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Fyresale, []}
+      mod: {Fyresale, []},
+      registered: [Products]
     ]
   end
 
@@ -23,7 +24,8 @@ defmodule Fyresale.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.5.1"},
-      {:floki, "~> 0.21.0"}
+      {:floki, "~> 0.21.0"},
+      {:bamboo_smtp, "~> 1.7.0"}
     ]
   end
 end
