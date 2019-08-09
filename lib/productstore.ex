@@ -1,6 +1,6 @@
 defmodule Fyresale.ProductStore do
   @moduledoc """
-  Maintains state of watched prices  
+  Maintains state of watched products  
   """
   require Logger
 

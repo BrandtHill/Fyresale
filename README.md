@@ -38,7 +38,13 @@ To get the CSS selector of an item's price, do the following in Chrome (other br
 The CSS selector should ideally match only the text node of the price, but it will work so long as the first 
 (deep) text field of the resulting html node can be parsed as a float after having any currency symbols removed.
 
-If you're using gmail, make sure to "allow less secure apps" for the account you're trying to send from.
+## Testing Selectors
+
+There are two custom mix tasks that both allow for testing and evaluation of css selectors.
+You'll need to run ```mix deps.compile``` before using the tasks
+
+* ```mix get_html "{URL}" "{SELECTOR}"```   - Runs ```Floki.find/2``` on html body from url with selector
+* ```mix get_price "{URL}" "{SELECTOR}"```  - Runs ```Fyresale.PriceFinder.get_price/2``` with url and selector
 
 ## Configuration
 
@@ -69,6 +75,10 @@ Example: Say I have defined the following variables
 * SELECTOR_911, SELECTOR_79, SELECTOR_2
 
 We only have all the requisite parameters for products of indexes 2 and 79, so all others would get ignored.
+
+Fyresale use SMTP for emailing because it's trivial to use a regular gmail account. It can easily be changed to use
+an email service like Mailgun, Mandrill, or SendGrid, but I didn't want to have to sign up for a bunch of enterprise
+email services. If you're using gmail, make sure to "allow less secure apps" for the account you're trying to send from.
 
 ## Dependencies
 
